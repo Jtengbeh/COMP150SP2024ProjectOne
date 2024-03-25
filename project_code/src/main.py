@@ -297,3 +297,32 @@ def start_game():
 
 if __name__ == '__main__':
     start_game()
+
+rom project_code.src.User import User
+from project_code.src.UserFactory import UserFactory
+from project_code.src.UserInputParser import UserInputParser
+
+class Game:
+    def __init__(self):
+        self.parser = UserInputParser()
+        self.user_factory = UserFactory()
+        self.instance_creator = InstanceCreator(self.user_factory, self.parser)
+        self.current_user = None
+        self.current_game = None
+
+    def start_game(self):
+        response = self.parser.parse("Would you like to start a new game? (yes/no)")
+        if "yes" in response:
+            self.current_user = self.instance_creator.get_user_info("yes")
+            if self.current_user:
+                self.current_game = self.current_user.current_game
+                if self.current_game:
+                    response = self.current_game.start_game()
+                    if response == "Save and quit":
+                        self.current_user.save_game()
+                        print("Game saved. Goodbye!")
+                        return
+                    elif response:
+                        print("Goodbye!")
+                        return
+        print("See you next time!")
